@@ -32,19 +32,19 @@ void Usage() {
   printf("  -i <input>      input file name.\n");
   printf("  -o <output>     output file name.\n");
   printf("  -qp <value>     quantization bits for the position attribute, ");
-  printf("default=11.\n");
+  printf("[0-30], default=11.\n");
   printf("  -qt <value>     quantization bits for the texture coordinate ");
-  printf("attribute, default=10.\n");
+  printf("attribute, [0-30], default=10.\n");
   printf("  -qn <value>     quantization bits for the normal vector attribute");
-  printf(", default=8.\n");
+  printf(", [0-30], default=8.\n");
   printf("  -qc <value>     quantization bits for the color attribute, ");
-  printf("default=8.\n");
+  printf("[0-30], default=8.\n");
   printf("  -qtg <value>    quantization bits for the tangent attribute, ");
-  printf("default=8.\n");
+  printf("[0-30], default=8.\n");
   printf("  -qw <value>     quantization bits for the weight attribute, ");
-  printf("default=8.\n");
+  printf("[0-30], default=8.\n");
   printf("  -qg <value>     quantization bits for any generic attribute, ");
-  printf("default=8.\n");
+  printf("[0-30], default=8.\n");
 
   printf("\nBoolean options may be negated by prefixing 'no'.\n");
 }
