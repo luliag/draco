@@ -71,7 +71,7 @@ StatusOr<std::unique_ptr<Mesh>> StlDecoder::DecodeFromBuffer(
   }
 
   std::unique_ptr<Mesh> mesh = builder.Finalize();
-  return mesh;
+  return move(mesh);
 }
 
 }  // namespace draco

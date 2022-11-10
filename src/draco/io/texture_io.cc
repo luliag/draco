@@ -47,7 +47,7 @@ StatusOr<std::unique_ptr<Texture>> ReadTextureFromFile(
       "image/" + (extension == "jpg" ? "jpeg" : extension);
   source_image.set_mime_type(mime_type);
   texture->set_source_image(source_image);
-  return texture;
+  return move(texture);
 }
 
 StatusOr<std::unique_ptr<Texture>> ReadTextureFromBuffer(
@@ -58,7 +58,7 @@ StatusOr<std::unique_ptr<Texture>> ReadTextureFromBuffer(
                          CreateDracoTextureInternal(image_data, &source_image));
   source_image.set_mime_type(mime_type);
   texture->set_source_image(source_image);
-  return texture;
+  return move(texture);
 }
 
 Status WriteTextureToFile(const std::string &file_name,

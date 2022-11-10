@@ -321,7 +321,7 @@ StatusOr<std::unique_ptr<SourceImage>> GetSourceImage(
   source_image->set_filename(image.uri);
   source_image->set_mime_type(image.mimeType);
 
-  return source_image;
+  return move(source_image);
 }
 
 std::unique_ptr<TrsMatrix> GetNodeTrsMatrix(const tinygltf::Node &node) {
@@ -557,7 +557,7 @@ StatusOr<std::unique_ptr<Mesh>> GltfDecoder::BuildMesh() {
   DRACO_RETURN_IF_ERROR(AddMeshFeaturesToDracoMesh(mesh.get()));
   DRACO_RETURN_IF_ERROR(AddStructuralMetadataToGeometry(mesh.get()));
   MoveNonMaterialTextures(mesh.get());
-  return mesh;
+  return move(mesh);
 }
 
 Status GltfDecoder::AddMeshFeaturesToDracoMesh(Mesh *mesh) {
@@ -2878,7 +2878,7 @@ StatusOr<std::unique_ptr<Mesh>> GltfDecoder::BuildMeshFromBuilder(
   if (!mesh) {
     return ErrorStatus("Failed to build Draco mesh from glTF data.");
   }
-  return mesh;
+  return move(mesh);
 }
 
 }  // namespace draco

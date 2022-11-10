@@ -30,7 +30,7 @@ StatusOr<std::unique_ptr<DracoTranscoder>> DracoTranscoder::Create(
   DRACO_RETURN_IF_ERROR(options.geometry.Check());
   std::unique_ptr<DracoTranscoder> dt(new DracoTranscoder());
   dt->transcoding_options_ = options;
-  return dt;
+  return move(dt);
 }
 
 StatusOr<std::unique_ptr<DracoTranscoder>> DracoTranscoder::Create(

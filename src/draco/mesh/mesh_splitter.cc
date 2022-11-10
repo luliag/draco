@@ -264,7 +264,7 @@ MeshSplitterInternal<TriangleSoupMeshBuilder>::BuildMeshes(
       continue;
     }
   }
-  return out_meshes;
+  return move(out_meshes);
 }
 
 template <>
@@ -288,7 +288,7 @@ MeshSplitterInternal<PointCloudBuilder>::BuildMeshes(
     mesh_pc->Copy(*pc);
     out_meshes[mi] = std::move(mesh);
   }
-  return out_meshes;
+  return move(out_meshes);
 }
 
 StatusOr<MeshSplitter::MeshVector> MeshSplitter::FinalizeMeshes(

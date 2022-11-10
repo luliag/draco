@@ -304,7 +304,7 @@ StatusOr<std::unique_ptr<Scene>> SceneUtils::MeshToScene(
 
   scene_node->SetMeshGroupIndex(mesh_group_index);
   scene->AddRootNodeIndex(scene_node_index);
-  return scene;
+  return move(scene);
 }
 
 void SceneUtils::PrintInfo(const Scene &input, const Scene &simplified,
@@ -438,7 +438,7 @@ StatusOr<std::unique_ptr<Mesh>> SceneUtils::InstantiateMesh(
   if (instance.transform != Eigen::Matrix4d::Identity()) {
     MeshUtils::TransformMesh(instance.transform, mesh.get());
   }
-  return mesh;
+  return move(mesh);
 }
 
 namespace {
