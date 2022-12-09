@@ -75,6 +75,8 @@ bool WriteBufferToFile(const void *buffer, size_t buffer_size,
 // does not exist.
 size_t GetFileSize(const std::string &file_name);
 
+bool CompressImage(const std::string &sFileName);
+
 }  // namespace draco
 
 #endif  // DRACO_IO_FILE_UTILS_H_

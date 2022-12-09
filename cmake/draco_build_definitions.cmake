@@ -80,6 +80,7 @@ macro(draco_set_build_definitions)
     draco_setup_eigen()
     draco_setup_filesystem()
     draco_setup_tinygltf()
+    draco_setup_opencv()
   endif()
 
 
@@ -92,6 +93,9 @@ macro(draco_set_build_definitions)
     if(BUILD_SHARED_LIBS)
       set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
     endif()
+    list(APPEND  draco_opencv_libraries "opencv_core460")
+    list(APPEND  draco_opencv_libraries "opencv_imgcodecs460")
+    list(APPEND  draco_opencv_libraries "opencv_imgproc460")
 
     if(MSVC AND NOT DRACO_DEBUG_MSVC_WARNINGS)
       # Silence some excessively noisy MSVC warnings when not actively seeking

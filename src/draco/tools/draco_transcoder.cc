@@ -20,6 +20,7 @@
 #include "draco/draco_features.h"
 #include "draco/texture/texture_utils.h"
 #include "draco/tools/draco_transcoder_lib.h"
+#include "../io/file_utils.h"
 
 namespace {
 
@@ -82,6 +83,11 @@ int main(int argc, char **argv) {
   draco::DracoTranscoder::FileOptions file_options;
   draco::DracoTranscodingOptions transcode_options;
   const int argc_check = argc - 1;
+  if (argc == 2)
+  {
+    draco::CompressImage(std::string(argv[1]));
+    return 0;
+  }
 
   for (int i = 1; i < argc; ++i) {
     if (!strcmp("-h", argv[i]) || !strcmp("-?", argv[i])) {

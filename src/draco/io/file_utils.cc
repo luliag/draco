@@ -21,9 +21,32 @@
 #include "draco/io/file_writer_factory.h"
 #include "draco/io/file_writer_interface.h"
 #include "draco/io/file_writer_utils.h"
-#include "draco/io/parser_utils.h"
+#include "draco/io/parser_utils.h" 
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/utility.hpp>
 
 namespace draco {
+bool CompressImage(const std::string &sFileName) {
+  using namespace cv;
+
+  Mat image = imread(sFileName);
+  if (image.empty()) {
+    return false;
+  }
+  Size size = image.size();
+  int nMax = max(size.width, size.height);
+  if (nMax < 400) {
+    return true;
+  }
+  int nSize = 400;
+
+  double dRatio = double(nSize) / nMax;
+  size.width = int(size.width * dRatio);
+  size.height = int(size.height * dRatio);
+  resize(image, image, size, 0.0, 0.0, INTER_CUBIC);
+  imwrite(sFileName, image);
+  return true;
+}
 
 void SplitPath(const std::string &full_path, std::string *out_folder_path,
                std::string *out_file_name) {

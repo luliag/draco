@@ -1004,7 +1004,6 @@ else()
     list(APPEND draco_object_library_deps draco_material draco_scene
          draco_texture)
   endif()
-
   # Library targets that consume the object collections.
   if(MSVC)
     # In order to produce a DLL and import library the Windows tools require
@@ -1027,6 +1026,7 @@ else()
       INCLUDES ${draco_include_paths}
       OBJLIB_DEPS ${draco_object_library_deps})
     add_library(draco::draco ALIAS draco)
+    target_link_libraries(draco ${draco_opencv_libraries})
 
   else()
     draco_add_library(
@@ -1109,15 +1109,15 @@ else()
     NAME draco_decoder
     SOURCES "${draco_src_root}/tools/draco_decoder.cc" ${draco_io_sources}
     DEFINES ${draco_defines}
-    INCLUDES ${draco_include_paths}
-    LIB_DEPS ${draco_dependency})
+    INCLUDES ${draco_include_paths})
+    target_link_libraries(draco_decoder ${draco_opencv_libraries} ${draco_dependency})
 
   draco_add_executable(
     NAME draco_encoder
     SOURCES "${draco_src_root}/tools/draco_encoder.cc" ${draco_io_sources}
     DEFINES ${draco_defines}
-    INCLUDES ${draco_include_paths}
-    LIB_DEPS ${draco_dependency})
+    INCLUDES ${draco_include_paths})
+    target_link_libraries(draco_encoder ${draco_opencv_libraries} ${draco_dependency})
 
   if(DRACO_TRANSCODER_SUPPORTED)
     draco_add_executable(
@@ -1127,8 +1127,8 @@ else()
               "${draco_src_root}/tools/draco_transcoder_lib.h"
               ${draco_io_sources}
       DEFINES ${draco_defines}
-      INCLUDES ${draco_include_paths}
-      LIB_DEPS ${draco_dependency})
+      INCLUDES ${draco_include_paths})
+      target_link_libraries(draco_transcoder ${draco_opencv_libraries} ${draco_dependency})
   endif()
 
   draco_setup_install_target()

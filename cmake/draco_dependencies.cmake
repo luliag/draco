@@ -44,6 +44,11 @@ draco_track_configuration_variable(DRACO_GOOGLETEST_PATH)
 set(DRACO_TINYGLTF_PATH)
 draco_track_configuration_variable(DRACO_TINYGLTF_PATH)
 
+# Path to the opencv installation. The path must be to the root of the
+# project directory.
+set(DRACO_OPENCV_PATH)
+draco_track_configuration_variable(DRACO_OPENCV_PATH)
+
 # Utility macro for killing the build due to a missing submodule directory.
 macro(draco_die_missing_submodule dir)
   message(FATAL_ERROR "${dir} missing, run git submodule update --init")
@@ -137,4 +142,25 @@ macro(draco_setup_tinygltf)
   endif()
 
   list(APPEND draco_include_paths "${tinygltf_path}")
+endmacro()
+
+# Determines the location of opencv and updates the build configuration
+# accordingly.
+macro(draco_setup_opencv)
+  if(DRACO_OPENCV_PATH)
+    set(opencv_path "${DRACO_OPENCV_PATH}")
+
+    if(NOT IS_DIRECTORY "${opencv_path}")
+      message(FATAL_ERROR "DRACO_OPENCV_PATH does not exist.")
+    endif()
+  else()
+    set(opencv_path "${draco_root}/third_party/opencv")
+
+    if(NOT IS_DIRECTORY "${opencv_path}")
+      draco_die_missing_submodule("${opencv_path}")
+    endif()
+  endif()
+
+  list(APPEND draco_include_paths "${opencv_path}/include")
+  set(opencv_lib_paths "${opencv_path}/bin")
 endmacro()

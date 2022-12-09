@@ -41,6 +41,8 @@
 #include "draco/scene/instance_array.h"
 #include "draco/scene/scene_indices.h"
 #include "draco/texture/texture_utils.h"
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/utility.hpp>
 
 namespace draco {
 
@@ -373,7 +375,7 @@ class GltfAsset {
                          int num_components);
 
   // Saves an image with a given |image_index| into a buffer.
-  Status SaveImageToBuffer(int image_index);
+  Status SaveImageToBuffer(int image_index, bool bNeedCompress = false, std::string &sFilePrefix = std::string(""));
 
   // Adds |sampler| to vector of samplers and returns the index. If |sampler| is
   // equal to default values then |sampler| is not added to the vector and
@@ -1416,12 +1418,26 @@ StatusOr<int> GltfAsset::AddImage(const std::string &image_stem,
   return images_.size() - 1;
 }
 
-Status GltfAsset::SaveImageToBuffer(int image_index) {
+Status GltfAsset::SaveImageToBuffer(
+    int image_index,
+    bool bNeedCompress /* = false*/, std::string &sFilePrefix/* = std::string("")*/) {
   GltfImage &image = images_[image_index];
   const Texture *const texture = image.texture;
   const int num_components = image.num_components;
   std::vector<uint8_t> buffer;
-  DRACO_RETURN_IF_ERROR(WriteTextureToBuffer(*texture, &buffer));
+  if (bNeedCompress) {
+    std::string sTmpFileName = sFilePrefix + image.image_name;
+    DRACO_RETURN_IF_ERROR(WriteTextureToFile(sTmpFileName, *texture));
+    if (!CompressImage(sTmpFileName)) {
+      return Status(Status::IO_ERROR);
+    }
+    StatusOr<std::unique_ptr<Texture>> tmpTexture =
+        ReadTextureFromFile(sTmpFileName);
+    DRACO_RETURN_IF_ERROR(WriteTextureToBuffer(*tmpTexture.value(), &buffer));
+    remove(sTmpFileName.c_str());
+  } else {
+    DRACO_RETURN_IF_ERROR(WriteTextureToBuffer(*texture, &buffer));
+  }
 
   // Add the image data to the buffer.
   const size_t buffer_start_offset = buffer_.size();
@@ -2595,9 +2611,10 @@ Status GltfAsset::EncodeMaterialsProperty(EncoderBuffer *buf_out) {
 
   if (!images_.empty()) {
     gltf_json_.BeginArray("images");
+    std::string sTmpFilePrefixName = cv::tempfile("");
     for (int i = 0; i < images_.size(); ++i) {
       if (add_images_to_buffer_) {
-        DRACO_RETURN_IF_ERROR(SaveImageToBuffer(i));
+        DRACO_RETURN_IF_ERROR(SaveImageToBuffer(i, true, sTmpFilePrefixName));
       }
       gltf_json_.BeginObject();
       if (images_[i].buffer_view >= 0) {
@@ -3531,6 +3548,7 @@ Status GltfEncoder::WriteGltfFiles(const GltfAsset &gltf_asset,
       return Status(Status::DRACO_ERROR, "Error getting glTF image.");
     }
     DRACO_RETURN_IF_ERROR(WriteTextureToFile(name, *image->texture));
+    CompressImage(name);
   }
   return OkStatus();
 }
